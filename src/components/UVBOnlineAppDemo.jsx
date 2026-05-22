@@ -63,16 +63,30 @@ const adminStudents = [
 
 const adminActions = ["Alta alumno", "Crear curso", "Subir contrato", "Programar clase", "Revisar CFDI", "Crear comunicado"];
 
+const adminActionCopy = {
+  "Alta alumno": "Formulario para registrar alumno, campus, carrera, documentos y estado inicial.",
+  "Crear curso": "Panel para crear curso, modalidad, profesor asignado, calendario y materiales.",
+  "Subir contrato": "Flujo para cargar contrato, asociarlo al expediente y marcar estatus.",
+  "Programar clase": "Calendario para definir fecha, hora, profesor, grupo y salon virtual.",
+  "Revisar CFDI": "Bandeja para validar datos fiscales y solicitudes de factura.",
+  "Crear comunicado": "Editor para enviar avisos a alumnos, profesores o grupos especificos.",
+};
+
 const onlineCourses = [
-  ["Marketing Digital", "Online", 72],
-  ["Administracion de Empresas", "Hibrido", 64],
-  ["Contabilidad Basica", "Hibrido", 81],
-  ["Ingles Profesional", "Online", 38],
-  ["Finanzas para Emprendedores", "Online", 52],
+  ["Marketing Digital", "Online", 72, "Mtra. Daniela Ramos", "Hoy 18:00"],
+  ["Administracion de Empresas", "Hibrido", 64, "Dr. Carlos Medina", "Lunes 10:00"],
+  ["Contabilidad Basica", "Hibrido", 81, "Mtro. Luis Aguilar", "Viernes 12:00"],
+  ["Ingles Profesional", "Online", 38, "Mtra. Sofia Luna", "Martes 17:00"],
+  ["Finanzas para Emprendedores", "Online", 52, "Mtro. Raul Santos", "Jueves 19:00"],
 ];
 
 const aiResults = ["Administracion de Empresas", "Marketing Digital", "Contabilidad Basica", "Finanzas para Emprendedores"];
 const aiBadges = ["Recomendador de cursos", "Buscador inteligente", "Clasificacion de prospectos", "Seguimiento academico"];
+
+const initialChatMessages = [
+  { from: "Alumno", text: "Maestra, donde subimos la actividad?" },
+  { from: "Profesor", text: "La actividad se sube en materiales antes del viernes." },
+];
 
 function cls(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -160,7 +174,7 @@ function AiAssistant({ compact = false }) {
   );
 }
 
-function StudentView({ setActiveView, setModal }) {
+function StudentView({ setActiveView, setModal, setSelectedCourse }) {
   return (
     <div className="grid gap-5 xl:grid-cols-[220px_1fr_300px]">
       <Sidebar title="Alumno" items={studentMenu} />
@@ -192,9 +206,24 @@ function StudentView({ setActiveView, setModal }) {
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-xl font-black text-[#1c5c3f]">Estado de cuenta</h3>
             <div className="flex flex-wrap gap-2">
-              <button onClick={() => setModal("cfdi")} className="rounded-xl bg-[#1c5c3f] px-4 py-2 text-sm font-bold text-white">Solicitar CFDI</button>
-              <button className="rounded-xl border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]">Descargar recibo</button>
-              <button className="rounded-xl border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]">Ver historial</button>
+              <button
+                onClick={() => setModal({ title: "Solicitud CFDI enviada", text: "La solicitud fue enviada a administracion para revision.", type: "success" })}
+                className="rounded-xl bg-[#1c5c3f] px-4 py-2 text-sm font-bold text-white"
+              >
+                Solicitar CFDI
+              </button>
+              <button
+                onClick={() => setModal({ title: "Recibo listo", text: "En una version real, aqui se descargaria el recibo del alumno.", type: "info" })}
+                className="rounded-xl border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]"
+              >
+                Descargar recibo
+              </button>
+              <button
+                onClick={() => setModal({ title: "Historial de pagos", text: "Colegiaturas, inscripcion, cursos online y pagos anteriores.", type: "info" })}
+                className="rounded-xl border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]"
+              >
+                Ver historial
+              </button>
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -225,7 +254,15 @@ function StudentView({ setActiveView, setModal }) {
                   <span className="text-sm font-black text-[#6b7f2b]">{progress}%</span>
                 </div>
                 <ProgressBar value={progress} />
-                <button onClick={() => setActiveView("online")} className="mt-4 w-full rounded-xl bg-[#8ba63f] px-4 py-2 text-sm font-bold text-white">Entrar al curso</button>
+                <button
+                  onClick={() => {
+                    setSelectedCourse(name);
+                    setActiveView("online");
+                  }}
+                  className="mt-4 w-full rounded-xl bg-[#8ba63f] px-4 py-2 text-sm font-bold text-white"
+                >
+                  Entrar al curso
+                </button>
               </div>
             ))}
           </div>
@@ -254,7 +291,7 @@ function StudentView({ setActiveView, setModal }) {
   );
 }
 
-function AdminView() {
+function AdminView({ setModal }) {
   return (
     <div className="grid gap-5 xl:grid-cols-[220px_1fr_280px]">
       <Sidebar title="Admin" items={adminMenu} />
@@ -324,7 +361,13 @@ function AdminView() {
           <h3 className="mb-4 font-black text-[#1c5c3f]">Acciones rapidas</h3>
           <div className="grid gap-2">
             {adminActions.map((action) => (
-              <button key={action} className="rounded-xl bg-[#f4f8f3] px-3 py-3 text-left text-sm font-bold text-[#1c5c3f] hover:bg-[#e4f1dc]">{action}</button>
+              <button
+                key={action}
+                onClick={() => setModal({ title: action, text: adminActionCopy[action], type: "info" })}
+                className="rounded-xl bg-[#f4f8f3] px-3 py-3 text-left text-sm font-bold text-[#1c5c3f] hover:bg-[#e4f1dc]"
+              >
+                {action}
+              </button>
             ))}
           </div>
         </Panel>
@@ -334,8 +377,8 @@ function AdminView() {
   );
 }
 
-function TeacherView({ setModal }) {
-  const [sent, setSent] = useState(false);
+function TeacherView({ setModal, chatMessages, setChatMessages }) {
+  const pendingMessages = Math.max(0, 6 - chatMessages.length);
   return (
     <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
       <div className="space-y-5">
@@ -346,9 +389,24 @@ function TeacherView({ setModal }) {
               <p className="font-bold text-[#123524]">Curso Marketing Digital · Campus Reynosa / Online</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <button onClick={() => setModal("salon")} className="rounded-xl bg-[#1c5c3f] px-4 py-2 text-sm font-bold text-white">Abrir salon virtual</button>
-              <button className="rounded-xl border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]">Subir material</button>
-              <button onClick={() => setSent(true)} className="rounded-xl bg-[#8ba63f] px-4 py-2 text-sm font-bold text-white">Enviar mensaje</button>
+              <button
+                onClick={() => setModal({ title: "Salon virtual", text: "Salon virtual programado: Marketing Digital · Hoy 18:00.", type: "success" })}
+                className="rounded-xl bg-[#1c5c3f] px-4 py-2 text-sm font-bold text-white"
+              >
+                Abrir salon virtual
+              </button>
+              <button
+                onClick={() => setModal({ title: "Material agregado", text: "En una version real, el profesor podria subir PDFs, videos o enlaces.", type: "info" })}
+                className="rounded-xl border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]"
+              >
+                Subir material
+              </button>
+              <button
+                onClick={() => setChatMessages((messages) => [...messages, { from: "Profesor", text: "Gracias, revisamos la actividad en la proxima clase." }])}
+                className="rounded-xl bg-[#8ba63f] px-4 py-2 text-sm font-bold text-white"
+              >
+                Enviar mensaje
+              </button>
             </div>
           </div>
         </Panel>
@@ -356,7 +414,7 @@ function TeacherView({ setModal }) {
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {[
             ["Alumnos inscritos", "28"],
-            ["Mensajes pendientes", sent ? "3" : "4"],
+            ["Mensajes pendientes", String(pendingMessages)],
             ["Materiales subidos", "6"],
             ["Proxima clase", "Hoy 18:00"],
           ].map(([label, value]) => (
@@ -380,43 +438,43 @@ function TeacherView({ setModal }) {
       <Panel>
         <h3 className="mb-4 text-xl font-black text-[#1c5c3f]">Chat con alumnos</h3>
         <div className="space-y-3">
-          <div className="rounded-2xl bg-[#f4f8f3] p-3">
-            <div className="text-xs font-bold text-[#60746a]">Alumno</div>
-            <p className="text-sm">Maestra, donde subimos la actividad?</p>
-          </div>
-          <div className="ml-8 rounded-2xl bg-[#1c5c3f] p-3 text-white">
-            <div className="text-xs font-bold text-[#d7eaa0]">Profesor</div>
-            <p className="text-sm">La actividad se sube en materiales antes del viernes.</p>
-          </div>
-          {sent && (
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="ml-8 rounded-2xl bg-[#8ba63f] p-3 text-white">
-              <div className="text-xs font-bold">Profesor</div>
-              <p className="text-sm">Mensaje enviado al grupo de Marketing Digital.</p>
+          {chatMessages.map((message, index) => (
+            <motion.div
+              key={`${message.from}-${message.text}-${index}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={cls(
+                "rounded-2xl p-3",
+                message.from === "Profesor" ? "ml-8 bg-[#1c5c3f] text-white" : "bg-[#f4f8f3]",
+              )}
+            >
+              <div className={cls("text-xs font-bold", message.from === "Profesor" ? "text-[#d7eaa0]" : "text-[#60746a]")}>{message.from}</div>
+              <p className="text-sm">{message.text}</p>
             </motion.div>
-          )}
+          ))}
         </div>
       </Panel>
     </div>
   );
 }
 
-function OnlineView() {
-  const [selected, setSelected] = useState("Marketing Digital");
-  const selectedCourse = onlineCourses.find(([name]) => name === selected) ?? onlineCourses[0];
+function OnlineView({ selectedCourse, setSelectedCourse, setModal }) {
+  const selected = onlineCourses.find(([name]) => name === selectedCourse) ?? onlineCourses[0];
+  const [name, mode, progress, teacher, nextSession] = selected;
 
   return (
     <div className="grid gap-5 xl:grid-cols-[260px_1fr_300px]">
       <Panel className="p-3">
         <div className="px-3 py-2 text-xs font-black uppercase tracking-wide text-[#6b7f2b]">Catalogo online</div>
         <div className="space-y-2">
-          {onlineCourses.map(([name, mode, progress]) => (
+          {onlineCourses.map(([courseName, courseMode, courseProgress]) => (
             <button
-              key={name}
-              onClick={() => setSelected(name)}
-              className={cls("w-full rounded-xl p-3 text-left", selected === name ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f] hover:bg-[#e4f1dc]")}
+              key={courseName}
+              onClick={() => setSelectedCourse(courseName)}
+              className={cls("w-full rounded-xl p-3 text-left", selectedCourse === courseName ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f] hover:bg-[#e4f1dc]")}
             >
-              <div className="font-black">{name}</div>
-              <div className={cls("text-xs font-bold", selected === name ? "text-[#d7eaa0]" : "text-[#60746a]")}>{mode} · {progress}%</div>
+              <div className="font-black">{courseName}</div>
+              <div className={cls("text-xs font-bold", selectedCourse === courseName ? "text-[#d7eaa0]" : "text-[#60746a]")}>{courseMode} · {courseProgress}%</div>
             </button>
           ))}
         </div>
@@ -425,22 +483,42 @@ function OnlineView() {
       <Panel>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-black text-[#1c5c3f]">{selectedCourse[0]}</h2>
-            <p className="text-sm font-bold text-[#3c594a]">Profesor asignado: Mtra. Daniela Ramos</p>
+            <h2 className="text-2xl font-black text-[#1c5c3f]">{name}</h2>
+            <p className="text-sm font-bold text-[#3c594a]">Profesor asignado: {teacher} · {mode}</p>
           </div>
-          <span className="rounded-full bg-[#e4f1dc] px-3 py-1 text-sm font-black text-[#1c5c3f]">Avance {selectedCourse[2]}%</span>
+          <span className="rounded-full bg-[#e4f1dc] px-3 py-1 text-sm font-black text-[#1c5c3f]">Avance {progress}%</span>
         </div>
         <div className="flex h-72 items-center justify-center rounded-2xl bg-[#1c5c3f] text-white">
           <div className="text-center">
             <PlayCircle className="mx-auto mb-3 h-14 w-14 text-[#d7eaa0]" />
             <div className="text-xl font-black">Video principal / clase online</div>
-            <button className="mt-4 rounded-xl bg-[#8ba63f] px-5 py-2 text-sm font-black text-white">Reproducir clase</button>
+            <div className="mt-1 text-sm text-green-50">{name}</div>
+            <button
+              onClick={() => setModal({ title: "Clase lista", text: `Reproduciendo clase online de ${name}.`, type: "success" })}
+              className="mt-4 rounded-xl bg-[#8ba63f] px-5 py-2 text-sm font-black text-white"
+            >
+              Reproducir clase
+            </button>
           </div>
         </div>
         <div className="mt-5 grid gap-3 md:grid-cols-3">
-          {["Proxima sesion: Hoy 18:00", "Salon virtual activo", "Chat del curso"].map((item) => (
+          {[`Proxima sesion: ${nextSession}`, "Salon virtual activo", "Chat del curso"].map((item) => (
             <div key={item} className="rounded-xl bg-[#f4f8f3] p-3 text-sm font-bold text-[#1c5c3f]">{item}</div>
           ))}
+        </div>
+        <div className="mt-5 flex flex-wrap gap-2">
+          <button
+            onClick={() => setModal({ title: "Salon virtual", text: `Salon virtual programado: ${name} · ${nextSession}.`, type: "success" })}
+            className="rounded-xl bg-[#1c5c3f] px-4 py-2 text-sm font-bold text-white"
+          >
+            Abrir salon virtual
+          </button>
+          <button
+            onClick={() => setModal({ title: "Materiales del curso", text: `Materiales disponibles para ${name}: guia, plantilla y rubrica.`, type: "info" })}
+            className="rounded-xl border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]"
+          >
+            Ver materiales
+          </button>
         </div>
         <div className="mt-5 rounded-2xl border border-[#8ba63f]/30 bg-[#f4f8f3] p-4 text-sm font-bold text-[#3c594a]">
           Contenido compatible con videos externos, salones virtuales y materiales generados con herramientas como HeyGen.
@@ -452,7 +530,11 @@ function OnlineView() {
           <h3 className="mb-4 font-black text-[#1c5c3f]">Materiales descargables</h3>
           <div className="space-y-2">
             {["Guia modulo 1.pdf", "Plantilla campana.xlsx", "Rubrica actividad.pdf"].map((item) => (
-              <button key={item} className="flex w-full items-center gap-2 rounded-xl bg-[#f4f8f3] px-3 py-3 text-left text-sm font-bold text-[#1c5c3f]">
+              <button
+                key={item}
+                onClick={() => setModal({ title: "Material descargable", text: `${item} estaria disponible para descarga en la version real.`, type: "info" })}
+                className="flex w-full items-center gap-2 rounded-xl bg-[#f4f8f3] px-3 py-3 text-left text-sm font-bold text-[#1c5c3f]"
+              >
                 <Download className="h-4 w-4 text-[#8ba63f]" />
                 {item}
               </button>
@@ -495,9 +577,8 @@ function PhoneScreen({ platform, screen }) {
   );
 }
 
-function MobileAppView() {
+function MobileAppView({ mobileScreen, setMobileScreen }) {
   const screens = ["Login UVB Online", "Mi cuenta", "Estado de cuenta", "Mis cursos", "Calendario / Salon virtual"];
-  const [screen, setScreen] = useState(screens[0]);
 
   return (
     <div className="grid gap-5 xl:grid-cols-[220px_1fr_1fr_320px]">
@@ -505,12 +586,18 @@ function MobileAppView() {
         <div className="px-3 py-2 text-xs font-black uppercase tracking-wide text-[#6b7f2b]">Pantallas</div>
         <div className="space-y-2">
           {screens.map((item) => (
-            <button key={item} onClick={() => setScreen(item)} className={cls("w-full rounded-xl px-3 py-3 text-left text-sm font-bold", screen === item ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f]")}>{item}</button>
+            <button
+              key={item}
+              onClick={() => setMobileScreen(item)}
+              className={cls("w-full rounded-xl px-3 py-3 text-left text-sm font-bold", mobileScreen === item ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f]")}
+            >
+              {item}
+            </button>
           ))}
         </div>
       </Panel>
-      <PhoneScreen platform="iOS" screen={screen} />
-      <PhoneScreen platform="Android" screen={screen} />
+      <PhoneScreen platform="iOS" screen={mobileScreen} />
+      <PhoneScreen platform="Android" screen={mobileScreen} />
       <Panel>
         <Smartphone className="mb-4 h-8 w-8 text-[#8ba63f]" />
         <h2 className="text-2xl font-black text-[#1c5c3f]">App movil iOS / Android</h2>
@@ -528,22 +615,23 @@ function MobileAppView() {
 }
 
 function Modal({ modal, setModal }) {
-  const copy = {
-    cfdi: "Solicitud CFDI enviada a administracion.",
-    salon: "Salon virtual programado: Marketing Digital · 18:00.",
-  };
-
   return (
     <AnimatePresence>
       {modal && (
         <motion.div className="fixed inset-0 z-50 grid place-items-center bg-[#123524]/35 p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setModal(null)}>
-          <motion.div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl" initial={{ scale: 0.96, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.96, y: 10 }} onClick={(event) => event.stopPropagation()}>
+          <motion.div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl" initial={{ scale: 0.96, y: 10 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.96, y: 10 }} onClick={(event) => event.stopPropagation()}>
             <div className="mb-4 flex items-start justify-between gap-4">
-              <h3 className="text-xl font-black text-[#1c5c3f]">{copy[modal]}</h3>
+              <div>
+                <div className={cls("mb-2 inline-flex rounded-full px-3 py-1 text-xs font-black", modal.type === "success" ? "bg-[#e4f1dc] text-[#1c5c3f]" : "bg-[#f4f8f3] text-[#6b7f2b]")}>
+                  UVB Online
+                </div>
+                <h3 className="text-xl font-black text-[#1c5c3f]">{modal.title}</h3>
+              </div>
               <button onClick={() => setModal(null)} className="rounded-xl bg-[#f4f8f3] p-2 text-[#1c5c3f]" aria-label="Cerrar modal">
                 <X className="h-5 w-5" />
               </button>
             </div>
+            <p className="mb-5 leading-relaxed text-[#3c594a]">{modal.text}</p>
             <button onClick={() => setModal(null)} className="w-full rounded-xl bg-[#1c5c3f] px-4 py-3 text-sm font-bold text-white">Entendido</button>
           </motion.div>
         </motion.div>
@@ -555,13 +643,16 @@ function Modal({ modal, setModal }) {
 export default function UVBOnlineAppDemo() {
   const [activeView, setActiveView] = useState("alumno");
   const [modal, setModal] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState("Marketing Digital");
+  const [chatMessages, setChatMessages] = useState(initialChatMessages);
+  const [mobileScreen, setMobileScreen] = useState("Mi cuenta");
 
   const activeLabel = useMemo(() => views.find((view) => view.id === activeView)?.label ?? "Alumno", [activeView]);
 
   return (
     <div className="min-h-screen bg-[#f4f8f3] text-[#123524]">
       <header className="sticky top-0 z-40 border-b border-[#1c5c3f]/10 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-[1500px] flex-col gap-4 px-4 py-4 sm:px-6 xl:flex-row xl:items-center xl:justify-between">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex min-w-0 items-center gap-3">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#1c5c3f] font-black text-white">UVB</div>
             <div className="min-w-0">
@@ -588,14 +679,14 @@ export default function UVBOnlineAppDemo() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1500px] px-4 py-5 sm:px-6">
+      <main className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
         <AnimatePresence mode="wait">
           <motion.section key={activeView} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.22 }}>
-            {activeView === "alumno" && <StudentView setActiveView={setActiveView} setModal={setModal} />}
-            {activeView === "admin" && <AdminView />}
-            {activeView === "profesor" && <TeacherView setModal={setModal} />}
-            {activeView === "online" && <OnlineView />}
-            {activeView === "app" && <MobileAppView />}
+            {activeView === "alumno" && <StudentView setActiveView={setActiveView} setModal={setModal} setSelectedCourse={setSelectedCourse} />}
+            {activeView === "admin" && <AdminView setModal={setModal} />}
+            {activeView === "profesor" && <TeacherView setModal={setModal} chatMessages={chatMessages} setChatMessages={setChatMessages} />}
+            {activeView === "online" && <OnlineView selectedCourse={selectedCourse} setSelectedCourse={setSelectedCourse} setModal={setModal} />}
+            {activeView === "app" && <MobileAppView mobileScreen={mobileScreen} setMobileScreen={setMobileScreen} />}
           </motion.section>
         </AnimatePresence>
       </main>
