@@ -29,6 +29,64 @@ import {
 
 const navItems = ["Intranet", "Estado de cuenta", "UVB Online", "Dashboard"];
 
+const translations = {
+  en: {
+    "Estado de cuenta": "Account status",
+    "Demo conceptual": "Concept demo",
+    "Universidad Valle del Bravo": "Universidad Valle del Bravo",
+    "Demo interactiva · WebApp primero, app móvil después con Capacitor": "Interactive demo · WebApp first, mobile app later with Capacitor",
+    "un campus digital vivo": "a live digital campus",
+    "Cambia el perfil, selecciona un curso y prueba la IA: la misma WebApp alimenta la intranet académica, el dashboard administrativo y la app iOS / Android.": "Switch profiles, select a course and test the AI: the same WebApp powers the academic intranet, admin dashboard and iOS / Android app.",
+    Alumno: "Student",
+    Profesor: "Teacher",
+    Admin: "Admin",
+    "App Alumno": "Student App",
+    "App Profesor": "Teacher App",
+    "App Admin": "Admin App",
+    Bienvenida: "Welcome",
+    Avance: "Progress",
+    Adeudo: "Balance",
+    Cursos: "Courses",
+    Grupos: "Groups",
+    Tareas: "Tasks",
+    Alertas: "Alerts",
+    Alumnos: "Students",
+    Prospectos: "Prospects",
+    "Continuar mi clase": "Continue my class",
+    "Grupo en vivo": "Live group",
+    "Pulso operativo": "Operational pulse",
+    "Entrar ahora": "Enter now",
+    "Abrir aula": "Open classroom",
+    "Ver tablero": "Open dashboard",
+    "Mis cursos": "My courses",
+    Calendario: "Calendar",
+    Profesores: "Teachers",
+    "Módulo activo": "Active module",
+    "Admin WebApp": "Admin WebApp",
+    "Cursos y avance": "Courses and progress",
+    "Selecciona un curso para actualizar la app móvil.": "Select a course to update the mobile app.",
+    "físico + online": "physical + online",
+    "IA Académica": "Academic AI",
+    "Simulación Hugging Face": "Hugging Face simulation",
+    Caso: "Case",
+    "Solicitar CFDI": "Request CFDI",
+    "Módulos del MVP": "MVP modules",
+    "No es solo una app: es una plataforma operativa": "It is not just an app: it is an operating platform",
+    "Toca un módulo para verlo reflejado en el teléfono y entender cómo la WebApp conecta alumnos, profesores y administración.": "Tap a module to see it reflected on the phone and understand how the WebApp connects students, teachers and administration.",
+    "Módulo seleccionado": "Selected module",
+    "Impacto demo": "Demo impact",
+    "Base escalable": "Scalable base",
+    "Admin real": "Real admin",
+    "Cursos digitales con videos, salones virtuales, materiales descargables, seguimiento de avance y apoyo de HeyGen para contenidos introductorios.": "Digital courses with videos, virtual classrooms, downloadable materials, progress tracking and HeyGen support for introductory content.",
+    "Alta de alumnos, profesores, perfiles, fotografías, documentos, cursos, materias, calendario, contratos y parametrización básica.": "Student, teacher, profile, photo, document, course, subject, calendar, contract and basic settings management.",
+    "Astro, React, GitHub, Vercel, Supabase, Hugging Face y Capacitor para reducir costo sin perder arquitectura moderna.": "Astro, React, GitHub, Vercel, Supabase, Hugging Face and Capacitor to reduce cost without losing a modern architecture.",
+  },
+};
+
+function tr(text, lang) {
+  return translations[lang]?.[text] ?? text;
+}
+
 const personas = {
   alumno: {
     label: "Alumno",
@@ -154,7 +212,7 @@ const modules = [
   { icon: Smartphone, title: "App iOS / Android", text: "WebApp convertida en app móvil mediante Capacitor con navegación optimizada.", metric: "Base WebApp" },
 ];
 
-function PhonePreview({ persona, selectedCourse, activeModule }) {
+function PhonePreview({ persona, selectedCourse, activeModule, lang }) {
   const data = personas[persona];
   const AccentIcon = persona === "admin" ? UserRoundCog : persona === "profesor" ? GraduationCap : Home;
 
@@ -167,7 +225,7 @@ function PhonePreview({ persona, selectedCourse, activeModule }) {
               <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-xs font-black text-[#1c5c3f]">UVB</div>
               <div>
                 <div className="text-xs text-[#cfe98a]">UVB Online</div>
-                <div className="text-sm font-bold">App {data.label}</div>
+                <div className="text-sm font-bold">{tr(`App ${data.label}`, lang)}</div>
               </div>
             </div>
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10">
@@ -184,7 +242,7 @@ function PhonePreview({ persona, selectedCourse, activeModule }) {
               transition={{ duration: 0.22 }}
               className="rounded-2xl bg-white/12 p-4"
             >
-              <div className="text-xs text-green-100">Bienvenida</div>
+              <div className="text-xs text-green-100">{tr("Bienvenida", lang)}</div>
               <div className="text-lg font-black">{data.name}</div>
               <div className="text-xs text-[#dcefa1]">{data.role} · {data.campus}</div>
             </motion.div>
@@ -195,7 +253,7 @@ function PhonePreview({ persona, selectedCourse, activeModule }) {
           <div className="grid grid-cols-3 gap-2">
             {data.stats.map(([label, value]) => (
               <div key={label} className="rounded-2xl border border-[#1c5c3f]/10 bg-white p-3 shadow-sm">
-                <div className="text-[10px] text-[#60746a]">{label}</div>
+                <div className="text-[10px] text-[#60746a]">{tr(label, lang)}</div>
                 <div className="text-lg font-black text-[#1c5c3f]">{value}</div>
               </div>
             ))}
@@ -204,7 +262,7 @@ function PhonePreview({ persona, selectedCourse, activeModule }) {
           <motion.div layout className="rounded-3xl border border-[#1c5c3f]/10 bg-white p-4 shadow-sm">
             <div className="mb-3 flex items-center justify-between">
               <div>
-                <div className="font-bold text-[#1c5c3f]">{data.greeting}</div>
+                <div className="font-bold text-[#1c5c3f]">{tr(data.greeting, lang)}</div>
                 <div className="text-xs text-[#60746a]">{data.focus}</div>
               </div>
               <PlayCircle className="h-5 w-5 text-[#8ba63f]" />
@@ -219,7 +277,7 @@ function PhonePreview({ persona, selectedCourse, activeModule }) {
               </div>
             </div>
             <button className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#8ba63f] py-2 text-sm font-bold text-white">
-              {data.action}
+              {tr(data.action, lang)}
               <ChevronRight className="h-4 w-4" />
             </button>
           </motion.div>
@@ -228,7 +286,7 @@ function PhonePreview({ persona, selectedCourse, activeModule }) {
             {quickActions.map(({ icon: Icon, label }) => (
               <div key={label} className="rounded-2xl border border-[#1c5c3f]/10 bg-white p-3 shadow-sm">
                 <Icon className="mb-2 h-5 w-5 text-[#8ba63f]" />
-                <div className="text-xs font-bold text-[#1c5c3f]">{label}</div>
+                <div className="text-xs font-bold text-[#1c5c3f]">{tr(label, lang)}</div>
               </div>
             ))}
           </div>
@@ -236,7 +294,7 @@ function PhonePreview({ persona, selectedCourse, activeModule }) {
           <div className="rounded-2xl border border-[#8ba63f]/20 bg-[#eef6ea] p-3">
             <div className="flex items-center gap-2 text-xs font-black text-[#1c5c3f]">
               <Sparkles className="h-4 w-4 text-[#8ba63f]" />
-              Módulo activo
+              {tr("Módulo activo", lang)}
             </div>
             <div className="mt-1 text-sm font-bold text-[#1c5c3f]">{activeModule.title}</div>
             <div className="text-xs text-[#60746a]">{activeModule.metric}</div>
@@ -247,7 +305,7 @@ function PhonePreview({ persona, selectedCourse, activeModule }) {
   );
 }
 
-function AdminDashboard({ selectedCourseIndex, setSelectedCourseIndex, activePrompt, setActivePrompt }) {
+function AdminDashboard({ selectedCourseIndex, setSelectedCourseIndex, activePrompt, setActivePrompt, lang }) {
   const selectedCourse = courses[selectedCourseIndex];
   const prompt = aiPrompts[activePrompt];
 
@@ -255,7 +313,7 @@ function AdminDashboard({ selectedCourseIndex, setSelectedCourseIndex, activePro
     <div className="overflow-hidden rounded-[2rem] border border-[#1c5c3f]/10 bg-white/90 shadow-2xl shadow-green-950/10">
       <div className="flex items-center justify-between bg-[#1c5c3f] px-6 py-4 text-white">
         <div>
-          <div className="text-xs font-semibold text-[#cfe98a]">Admin WebApp</div>
+          <div className="text-xs font-semibold text-[#cfe98a]">{tr("Admin WebApp", lang)}</div>
           <div className="text-xl font-black">Dashboard UVB</div>
         </div>
         <Bell className="h-5 w-5 text-[#cfe98a]" />
@@ -264,7 +322,7 @@ function AdminDashboard({ selectedCourseIndex, setSelectedCourseIndex, activePro
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map(([label, value, note]) => (
             <motion.div whileHover={{ y: -2 }} key={label} className="rounded-2xl border border-[#1c5c3f]/10 bg-[#f4f8f3] p-4">
-              <div className="text-xs text-[#60746a]">{label}</div>
+              <div className="text-xs text-[#60746a]">{tr(label, lang)}</div>
               <div className="text-2xl font-black text-[#1c5c3f]">{value}</div>
               <div className="text-xs font-semibold text-[#6b7f2b]">{note}</div>
             </motion.div>
@@ -275,10 +333,10 @@ function AdminDashboard({ selectedCourseIndex, setSelectedCourseIndex, activePro
           <div className="rounded-3xl border border-[#1c5c3f]/10 bg-white p-4">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <div className="font-black text-[#1c5c3f]">Cursos y avance</div>
-                <div className="text-xs text-[#60746a]">Selecciona un curso para actualizar la app móvil.</div>
+                <div className="font-black text-[#1c5c3f]">{tr("Cursos y avance", lang)}</div>
+                <div className="text-xs text-[#60746a]">{tr("Selecciona un curso para actualizar la app móvil.", lang)}</div>
               </div>
-              <span className="rounded-full bg-[#8ba63f]/15 px-3 py-1 text-xs font-bold text-[#6b7f2b]">físico + online</span>
+              <span className="rounded-full bg-[#8ba63f]/15 px-3 py-1 text-xs font-bold text-[#6b7f2b]">{tr("físico + online", lang)}</span>
             </div>
             <div className="space-y-3">
               {courses.map((course, index) => (
@@ -313,8 +371,8 @@ function AdminDashboard({ selectedCourseIndex, setSelectedCourseIndex, activePro
               <div className="mb-3 flex items-center gap-3">
                 <Bot className="h-6 w-6 text-[#cfe98a]" />
                 <div>
-                  <div className="font-black">IA Académica</div>
-                  <div className="text-xs text-green-100">Simulación Hugging Face</div>
+                  <div className="font-black">{tr("IA Académica", lang)}</div>
+                  <div className="text-xs text-green-100">{tr("Simulación Hugging Face", lang)}</div>
                 </div>
               </div>
               <div className="mb-3 flex items-center gap-2 rounded-2xl bg-white/12 p-3 text-sm text-green-50">
@@ -331,7 +389,7 @@ function AdminDashboard({ selectedCourseIndex, setSelectedCourseIndex, activePro
                       activePrompt === index ? "bg-[#cfe98a] text-[#1c5c3f]" : "bg-white/10 text-green-50"
                     }`}
                   >
-                    Caso {index + 1}
+                    {tr("Caso", lang)} {index + 1}
                   </button>
                 ))}
               </div>
@@ -352,7 +410,7 @@ function AdminDashboard({ selectedCourseIndex, setSelectedCourseIndex, activePro
 
             <div className="rounded-3xl border border-[#1c5c3f]/10 bg-white p-5">
               <div className="mb-3 flex items-center justify-between">
-                <div className="font-black text-[#1c5c3f]">Estado de cuenta</div>
+                <div className="font-black text-[#1c5c3f]">{tr("Estado de cuenta", lang)}</div>
                 <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-bold text-amber-800">{selectedCourse.name}</span>
               </div>
               <div className="space-y-2">
@@ -364,7 +422,7 @@ function AdminDashboard({ selectedCourseIndex, setSelectedCourseIndex, activePro
                   </div>
                 ))}
               </div>
-              <button className="mt-3 w-full rounded-xl bg-[#8ba63f] py-2 text-sm font-bold text-white">Solicitar CFDI</button>
+              <button className="mt-3 w-full rounded-xl bg-[#8ba63f] py-2 text-sm font-bold text-white">{tr("Solicitar CFDI", lang)}</button>
             </div>
           </div>
         </div>
@@ -379,6 +437,7 @@ export default function UVBOnlineAppDemo() {
   const [selectedCourseIndex, setSelectedCourseIndex] = useState(0);
   const [activeModuleIndex, setActiveModuleIndex] = useState(3);
   const [activePrompt, setActivePrompt] = useState(0);
+  const [lang, setLang] = useState("es");
 
   const selectedCourse = courses[selectedCourseIndex];
   const activeModule = modules[activeModuleIndex];
@@ -393,13 +452,25 @@ export default function UVBOnlineAppDemo() {
           <div className="flex min-w-0 items-center gap-3">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#1c5c3f] font-black text-white shadow-xl ring-4 ring-white/70">UVB</div>
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-[#6b7f2b]">Universidad Valle del Bravo</div>
+              <div className="text-sm font-semibold text-[#6b7f2b]">{tr("Universidad Valle del Bravo", lang)}</div>
               <div className="truncate font-bold tracking-wide text-[#1c5c3f]">UVB Online · App iOS / Android</div>
             </div>
           </div>
           <nav className="hidden items-center gap-6 text-sm font-medium text-[#2f5b45] md:flex">
-            {navItems.map((item) => <span key={item}>{item}</span>)}
+            {navItems.map((item) => <span key={item}>{tr(item, lang)}</span>)}
           </nav>
+          <div className="hidden rounded-full border border-[#1c5c3f]/15 bg-white p-1 text-xs font-black text-[#1c5c3f] md:flex">
+            {["es", "en"].map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => setLang(item)}
+                className={`rounded-full px-3 py-1 uppercase ${lang === item ? "bg-[#1c5c3f] text-white" : ""}`}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
           <button
             type="button"
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#1c5c3f]/15 bg-white text-[#1c5c3f] shadow-sm md:hidden"
@@ -408,7 +479,7 @@ export default function UVBOnlineAppDemo() {
           >
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
-          <button className="hidden rounded-full bg-[#1c5c3f] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-green-950/20 md:block">Demo conceptual</button>
+          <button className="hidden rounded-full bg-[#1c5c3f] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-green-950/20 md:block">{tr("Demo conceptual", lang)}</button>
         </header>
 
         {isMobileMenuOpen && (
@@ -421,6 +492,18 @@ export default function UVBOnlineAppDemo() {
                   className="rounded-xl px-3 py-2 text-left hover:bg-[#f4f8f3]"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
+                  {tr(item, lang)}
+                </button>
+              ))}
+            </div>
+            <div className="mt-3 grid grid-cols-2 rounded-xl border border-[#1c5c3f]/10 bg-[#f4f8f3] p-1 text-xs font-black text-[#1c5c3f]">
+              {["es", "en"].map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setLang(item)}
+                  className={`rounded-lg px-3 py-2 uppercase ${lang === item ? "bg-[#1c5c3f] text-white" : ""}`}
+                >
                   {item}
                 </button>
               ))}
@@ -430,7 +513,7 @@ export default function UVBOnlineAppDemo() {
               className="mt-3 w-full rounded-xl bg-[#1c5c3f] px-4 py-2 text-sm font-semibold text-white"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Demo conceptual
+              {tr("Demo conceptual", lang)}
             </button>
           </div>
         )}
@@ -440,14 +523,14 @@ export default function UVBOnlineAppDemo() {
             <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#8ba63f]/40 bg-white/75 px-4 py-2 text-sm font-semibold text-[#1c5c3f] shadow-sm">
                 <GraduationCap className="h-4 w-4 text-[#8ba63f]" />
-                Demo interactiva · WebApp primero, app móvil después con Capacitor
+                {tr("Demo interactiva · WebApp primero, app móvil después con Capacitor", lang)}
               </div>
               <h1 className="text-4xl font-black leading-tight text-[#1c5c3f] md:text-6xl">
                 UVB Online
-                <span className="block text-[#8ba63f]">un campus digital vivo</span>
+                <span className="block text-[#8ba63f]">{tr("un campus digital vivo", lang)}</span>
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-relaxed text-[#3c594a]">
-                Cambia el perfil, selecciona un curso y prueba la IA: la misma WebApp alimenta la intranet académica, el dashboard administrativo y la app iOS / Android.
+                {tr("Cambia el perfil, selecciona un curso y prueba la IA: la misma WebApp alimenta la intranet académica, el dashboard administrativo y la app iOS / Android.", lang)}
               </p>
 
               <div className="mt-8 grid gap-4">
@@ -461,7 +544,7 @@ export default function UVBOnlineAppDemo() {
                         persona === key ? "bg-[#1c5c3f] text-white shadow-md" : "text-[#1c5c3f] hover:bg-[#f4f8f3]"
                       }`}
                     >
-                      {item.label}
+                      {tr(item.label, lang)}
                     </button>
                   ))}
                 </div>
@@ -483,7 +566,7 @@ export default function UVBOnlineAppDemo() {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.65, delay: 0.1 }}>
-              <PhonePreview persona={persona} selectedCourse={selectedCourse} activeModule={activeModule} />
+              <PhonePreview persona={persona} selectedCourse={selectedCourse} activeModule={activeModule} lang={lang} />
             </motion.div>
           </section>
 
@@ -493,16 +576,17 @@ export default function UVBOnlineAppDemo() {
               setSelectedCourseIndex={setSelectedCourseIndex}
               activePrompt={activePrompt}
               setActivePrompt={setActivePrompt}
+              lang={lang}
             />
           </section>
 
           <section className="pt-20">
             <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <div className="mb-2 font-bold text-[#6b7f2b]">Módulos del MVP</div>
-                <h2 className="text-3xl font-black text-[#1c5c3f] md:text-4xl">No es solo una app: es una plataforma operativa</h2>
+                <div className="mb-2 font-bold text-[#6b7f2b]">{tr("Módulos del MVP", lang)}</div>
+                <h2 className="text-3xl font-black text-[#1c5c3f] md:text-4xl">{tr("No es solo una app: es una plataforma operativa", lang)}</h2>
               </div>
-              <p className="max-w-xl text-[#3c594a]">Toca un módulo para verlo reflejado en el teléfono y entender cómo la WebApp conecta alumnos, profesores y administración.</p>
+              <p className="max-w-xl text-[#3c594a]">{tr("Toca un módulo para verlo reflejado en el teléfono y entender cómo la WebApp conecta alumnos, profesores y administración.", lang)}</p>
             </div>
             <div className="grid gap-4 md:grid-cols-[1fr_.72fr]">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -531,11 +615,11 @@ export default function UVBOnlineAppDemo() {
                 <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-[#cfe98a]">
                   <SelectedModuleIcon className="h-7 w-7" />
                 </div>
-                <div className="text-sm font-bold text-[#cfe98a]">Módulo seleccionado</div>
+                <div className="text-sm font-bold text-[#cfe98a]">{tr("Módulo seleccionado", lang)}</div>
                 <h3 className="mt-2 text-3xl font-black">{activeModule.title}</h3>
                 <p className="mt-4 leading-relaxed text-green-50">{activeModule.text}</p>
                 <div className="mt-5 rounded-2xl bg-white/10 p-4">
-                  <div className="text-xs text-green-100">Impacto demo</div>
+                  <div className="text-xs text-green-100">{tr("Impacto demo", lang)}</div>
                   <div className="mt-1 text-xl font-black text-[#cfe98a]">{activeModule.metric}</div>
                 </div>
               </motion.aside>
@@ -546,17 +630,17 @@ export default function UVBOnlineAppDemo() {
             <motion.div whileHover={{ y: -4 }} className="rounded-[2rem] bg-[#1c5c3f] p-6 text-white shadow-xl shadow-green-950/20">
               <Video className="mb-4 h-8 w-8 text-[#cfe98a]" />
               <h3 className="mb-3 text-2xl font-black">UVB Online</h3>
-              <p className="leading-relaxed text-green-50">Cursos digitales con videos, salones virtuales, materiales descargables, seguimiento de avance y apoyo de HeyGen para contenidos introductorios.</p>
+              <p className="leading-relaxed text-green-50">{tr("Cursos digitales con videos, salones virtuales, materiales descargables, seguimiento de avance y apoyo de HeyGen para contenidos introductorios.", lang)}</p>
             </motion.div>
             <motion.div whileHover={{ y: -4 }} className="rounded-[2rem] border border-[#1c5c3f]/10 bg-white/85 p-6 shadow-xl shadow-green-950/5">
               <UserRoundCog className="mb-4 h-8 w-8 text-[#8ba63f]" />
-              <h3 className="mb-3 text-2xl font-black text-[#1c5c3f]">Admin real</h3>
-              <p className="leading-relaxed text-[#3c594a]">Alta de alumnos, profesores, perfiles, fotografías, documentos, cursos, materias, calendario, contratos y parametrización básica.</p>
+              <h3 className="mb-3 text-2xl font-black text-[#1c5c3f]">{tr("Admin real", lang)}</h3>
+              <p className="leading-relaxed text-[#3c594a]">{tr("Alta de alumnos, profesores, perfiles, fotografías, documentos, cursos, materias, calendario, contratos y parametrización básica.", lang)}</p>
             </motion.div>
             <motion.div whileHover={{ y: -4 }} className="rounded-[2rem] border border-[#1c5c3f]/10 bg-white/85 p-6 shadow-xl shadow-green-950/5">
               <ShieldCheck className="mb-4 h-8 w-8 text-[#8ba63f]" />
-              <h3 className="mb-3 text-2xl font-black text-[#1c5c3f]">Base escalable</h3>
-              <p className="leading-relaxed text-[#3c594a]">Astro, React, GitHub, Vercel, Supabase, Hugging Face y Capacitor para reducir costo sin perder arquitectura moderna.</p>
+              <h3 className="mb-3 text-2xl font-black text-[#1c5c3f]">{tr("Base escalable", lang)}</h3>
+              <p className="leading-relaxed text-[#3c594a]">{tr("Astro, React, GitHub, Vercel, Supabase, Hugging Face y Capacitor para reducir costo sin perder arquitectura moderna.", lang)}</p>
             </motion.div>
           </section>
         </main>
