@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Bell,
@@ -18,6 +19,7 @@ import {
   ReceiptText,
   ShieldCheck,
   Smartphone,
+  X,
   UserRoundCog,
   Users,
   Video,
@@ -214,6 +216,8 @@ function AdminDashboard() {
 }
 
 export default function UVBOnlineAppDemo() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen overflow-hidden bg-[#f4f8f3] text-[#123524]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,166,63,.28),transparent_32%),radial-gradient(circle_at_80%_8%,rgba(28,92,63,.2),transparent_28%),linear-gradient(180deg,#fbfff8,#eef6ea_48%,#f8fbf5)]" />
@@ -232,8 +236,39 @@ export default function UVBOnlineAppDemo() {
             <span>UVB Online</span>
             <span>Dashboard</span>
           </nav>
+          <button
+            type="button"
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#1c5c3f]/15 bg-white text-[#1c5c3f] shadow-sm md:hidden"
+            aria-label={isMobileMenuOpen ? "Cerrar menu" : "Abrir menu"}
+            onClick={() => setIsMobileMenuOpen((open) => !open)}
+          >
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
           <button className="hidden rounded-full bg-[#1c5c3f] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-green-950/20 sm:block">Demo conceptual</button>
         </header>
+        {isMobileMenuOpen && (
+          <div className="mx-5 mb-3 rounded-2xl border border-[#1c5c3f]/10 bg-white/95 p-3 shadow-xl md:hidden sm:mx-6">
+            <div className="grid gap-1 text-sm font-semibold text-[#1c5c3f]">
+              {["Intranet", "Estado de cuenta", "UVB Online", "Dashboard"].map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  className="rounded-xl px-3 py-2 text-left hover:bg-[#f4f8f3]"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="mt-3 w-full rounded-xl bg-[#1c5c3f] px-4 py-2 text-sm font-semibold text-white"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Demo conceptual
+            </button>
+          </div>
+        )}
 
         <main className="mx-auto max-w-7xl px-5 pb-20 sm:px-6">
           <section className="grid items-center gap-10 pt-8 lg:grid-cols-[1fr_.92fr] lg:pt-14">
