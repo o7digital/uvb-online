@@ -121,16 +121,18 @@ function StatusBadge({ status }) {
   );
 }
 
-function Sidebar({ title, items }) {
+function Sidebar({ title, items, setModal }) {
   return (
     <Panel className="p-3">
       <div className="px-3 py-2 text-xs font-black uppercase tracking-wide text-[#6b7f2b]">{title}</div>
-      <div className="space-y-1">
+      <div className="flex gap-2 overflow-x-auto xl:block xl:space-y-1">
         {items.map((item, index) => (
           <button
             key={item}
+            type="button"
+            onClick={() => setModal?.({ title: item, text: `Modulo ${item} seleccionado dentro de ${title}.`, type: "info" })}
             className={cls(
-              "flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-bold",
+              "flex shrink-0 items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-bold xl:w-full",
               index === 0 ? "bg-[#1c5c3f] text-white" : "text-[#1c5c3f] hover:bg-[#f4f8f3]",
             )}
           >
@@ -177,7 +179,7 @@ function AiAssistant({ compact = false }) {
 function StudentView({ setActiveView, setModal, setSelectedCourse }) {
   return (
     <div className="grid gap-5 xl:grid-cols-[220px_1fr_300px]">
-      <Sidebar title="Alumno" items={studentMenu} />
+      <Sidebar title="Alumno" items={studentMenu} setModal={setModal} />
 
       <div className="space-y-5">
         <Panel>
@@ -207,19 +209,19 @@ function StudentView({ setActiveView, setModal, setSelectedCourse }) {
             <h3 className="text-xl font-black text-[#1c5c3f]">Estado de cuenta</h3>
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => setModal({ title: "Solicitud CFDI enviada", text: "La solicitud fue enviada a administracion para revision.", type: "success" })}
+                onClick={() => setModal({ title: "Solicitud CFDI enviada", text: "Solicitud CFDI enviada a administracion.", type: "success" })}
                 className="rounded-xl bg-[#1c5c3f] px-4 py-2 text-sm font-bold text-white"
               >
                 Solicitar CFDI
               </button>
               <button
-                onClick={() => setModal({ title: "Recibo listo", text: "En una version real, aqui se descargaria el recibo del alumno.", type: "info" })}
+                onClick={() => setModal({ title: "Recibo generado", text: "Recibo generado para descarga.", type: "info" })}
                 className="rounded-xl border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]"
               >
                 Descargar recibo
               </button>
               <button
-                onClick={() => setModal({ title: "Historial de pagos", text: "Colegiaturas, inscripcion, cursos online y pagos anteriores.", type: "info" })}
+                onClick={() => setModal({ title: "Historial de pagos", text: "Mayo: pendiente. Inscripcion: pagado. Curso online: pagado.", type: "info" })}
                 className="rounded-xl border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]"
               >
                 Ver historial
@@ -294,7 +296,7 @@ function StudentView({ setActiveView, setModal, setSelectedCourse }) {
 function AdminView({ setModal }) {
   return (
     <div className="grid gap-5 xl:grid-cols-[220px_1fr_280px]">
-      <Sidebar title="Admin" items={adminMenu} />
+      <Sidebar title="Admin" items={adminMenu} setModal={setModal} />
 
       <div className="space-y-5">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -429,7 +431,14 @@ function TeacherView({ setModal, chatMessages, setChatMessages }) {
           <h3 className="mb-4 text-xl font-black text-[#1c5c3f]">Modulos profesor</h3>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
             {["Mis grupos", "Calendario de clases", "Materiales", "Chat con alumnos", "Salon virtual"].map((item) => (
-              <button key={item} className="rounded-2xl border border-[#1c5c3f]/10 bg-[#f8fbf5] p-4 text-left font-bold text-[#1c5c3f] hover:bg-[#e4f1dc]">{item}</button>
+              <button
+                key={item}
+                type="button"
+                onClick={() => setModal({ title: item, text: `Modulo de profesor abierto: ${item}.`, type: "info" })}
+                className="rounded-2xl border border-[#1c5c3f]/10 bg-[#f8fbf5] p-4 text-left font-bold text-[#1c5c3f] hover:bg-[#e4f1dc]"
+              >
+                {item}
+              </button>
             ))}
           </div>
         </Panel>
@@ -470,6 +479,7 @@ function OnlineView({ selectedCourse, setSelectedCourse, setModal }) {
           {onlineCourses.map(([courseName, courseMode, courseProgress]) => (
             <button
               key={courseName}
+              type="button"
               onClick={() => setSelectedCourse(courseName)}
               className={cls("w-full rounded-xl p-3 text-left", selectedCourse === courseName ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f] hover:bg-[#e4f1dc]")}
             >
@@ -494,6 +504,7 @@ function OnlineView({ selectedCourse, setSelectedCourse, setModal }) {
             <div className="text-xl font-black">Video principal / clase online</div>
             <div className="mt-1 text-sm text-green-50">{name}</div>
             <button
+              type="button"
               onClick={() => setModal({ title: "Clase lista", text: `Reproduciendo clase online de ${name}.`, type: "success" })}
               className="mt-4 rounded-xl bg-[#8ba63f] px-5 py-2 text-sm font-black text-white"
             >
@@ -508,12 +519,14 @@ function OnlineView({ selectedCourse, setSelectedCourse, setModal }) {
         </div>
         <div className="mt-5 flex flex-wrap gap-2">
           <button
+            type="button"
             onClick={() => setModal({ title: "Salon virtual", text: `Salon virtual programado: ${name} · ${nextSession}.`, type: "success" })}
             className="rounded-xl bg-[#1c5c3f] px-4 py-2 text-sm font-bold text-white"
           >
             Abrir salon virtual
           </button>
           <button
+            type="button"
             onClick={() => setModal({ title: "Materiales del curso", text: `Materiales disponibles para ${name}: guia, plantilla y rubrica.`, type: "info" })}
             className="rounded-xl border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]"
           >
@@ -532,6 +545,7 @@ function OnlineView({ selectedCourse, setSelectedCourse, setModal }) {
             {["Guia modulo 1.pdf", "Plantilla campana.xlsx", "Rubrica actividad.pdf"].map((item) => (
               <button
                 key={item}
+                type="button"
                 onClick={() => setModal({ title: "Material descargable", text: `${item} estaria disponible para descarga en la version real.`, type: "info" })}
                 className="flex w-full items-center gap-2 rounded-xl bg-[#f4f8f3] px-3 py-3 text-left text-sm font-bold text-[#1c5c3f]"
               >
@@ -632,7 +646,7 @@ function Modal({ modal, setModal }) {
               </button>
             </div>
             <p className="mb-5 leading-relaxed text-[#3c594a]">{modal.text}</p>
-            <button onClick={() => setModal(null)} className="w-full rounded-xl bg-[#1c5c3f] px-4 py-3 text-sm font-bold text-white">Entendido</button>
+            <button onClick={() => setModal(null)} className="w-full rounded-xl bg-[#1c5c3f] px-4 py-3 text-sm font-bold text-white">Cerrar</button>
           </motion.div>
         </motion.div>
       )}
@@ -665,6 +679,7 @@ export default function UVBOnlineAppDemo() {
               <button
                 key={id}
                 type="button"
+                data-view={id}
                 onClick={() => setActiveView(id)}
                 className={cls(
                   "flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-sm font-black transition",
