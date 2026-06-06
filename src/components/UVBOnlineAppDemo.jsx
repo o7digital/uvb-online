@@ -10,6 +10,7 @@ import {
   FileCheck2,
   FileSignature,
   GraduationCap,
+  Menu,
   MonitorPlay,
   PlayCircle,
   Search,
@@ -93,7 +94,7 @@ function cls(...classes) {
 }
 
 function Panel({ children, className = "" }) {
-  return <div className={cls("rounded-2xl border border-[#1c5c3f]/10 bg-white p-5 shadow-sm", className)}>{children}</div>;
+  return <div className={cls("min-w-0 rounded-lg border border-[#1c5c3f]/10 bg-white p-4 shadow-sm sm:p-5", className)}>{children}</div>;
 }
 
 function ProgressBar({ value }) {
@@ -125,7 +126,7 @@ function Sidebar({ title, items, setModal }) {
   return (
     <Panel className="p-3">
       <div className="px-3 py-2 text-xs font-black uppercase tracking-wide text-[#6b7f2b]">{title}</div>
-      <div className="flex gap-2 overflow-x-auto xl:block xl:space-y-1">
+      <div className="flex min-w-0 gap-2 overflow-x-auto lg:block lg:space-y-1">
         {items.map((item, index) => (
           <button
             key={item}
@@ -133,6 +134,7 @@ function Sidebar({ title, items, setModal }) {
             onClick={() => setModal?.({ title: item, text: `Modulo ${item} seleccionado dentro de ${title}.`, type: "info" })}
             className={cls(
               "flex shrink-0 items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-bold xl:w-full",
+              "lg:w-full",
               index === 0 ? "bg-[#1c5c3f] text-white" : "text-[#1c5c3f] hover:bg-[#f4f8f3]",
             )}
           >
@@ -178,20 +180,20 @@ function AiAssistant({ compact = false }) {
 
 function StudentView({ setActiveView, setModal, setSelectedCourse }) {
   return (
-    <div className="grid gap-5 xl:grid-cols-[220px_1fr_300px]">
+    <div className="grid gap-4 lg:grid-cols-[200px_1fr] xl:grid-cols-[220px_1fr_300px] xl:gap-5">
       <Sidebar title="Alumno" items={studentMenu} setModal={setModal} />
 
-      <div className="space-y-5">
+      <div className="min-w-0 space-y-4 xl:space-y-5">
         <Panel>
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#e4f1dc] text-2xl font-black text-[#1c5c3f]">MF</div>
-              <div>
-                <h2 className="text-2xl font-black text-[#1c5c3f]">Maria Fernanda Lopez</h2>
-                <p className="text-sm font-bold text-[#3c594a]">Matricula UVB-2026-0184 · Campus Reynosa · Marketing Digital</p>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-[#e4f1dc] text-xl font-black text-[#1c5c3f] sm:h-16 sm:w-16 sm:text-2xl">MF</div>
+              <div className="min-w-0">
+                <h2 className="truncate text-xl font-black text-[#1c5c3f] sm:text-2xl">Maria Fernanda Lopez</h2>
+                <p className="line-clamp-2 text-xs font-bold text-[#3c594a] sm:text-sm">Matricula UVB-2026-0184 · Campus Reynosa · Marketing Digital</p>
               </div>
             </div>
-            <Bell className="h-5 w-5 text-[#8ba63f]" />
+            <Bell className="h-5 w-5 shrink-0 text-[#8ba63f]" />
           </div>
         </Panel>
 
@@ -207,22 +209,22 @@ function StudentView({ setActiveView, setModal, setSelectedCourse }) {
         <Panel>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-xl font-black text-[#1c5c3f]">Estado de cuenta</h3>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid w-full gap-2 sm:w-auto sm:grid-flow-col">
               <button
                 onClick={() => setModal({ title: "Solicitud CFDI enviada", text: "Solicitud CFDI enviada a administracion.", type: "success" })}
-                className="rounded-xl bg-[#1c5c3f] px-4 py-2 text-sm font-bold text-white"
+                className="rounded-lg bg-[#1c5c3f] px-4 py-2 text-sm font-bold text-white"
               >
                 Solicitar CFDI
               </button>
               <button
                 onClick={() => setModal({ title: "Recibo generado", text: "Recibo generado para descarga.", type: "info" })}
-                className="rounded-xl border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]"
+                className="rounded-lg border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]"
               >
                 Descargar recibo
               </button>
               <button
                 onClick={() => setModal({ title: "Historial de pagos", text: "Mayo: pendiente. Inscripcion: pagado. Curso online: pagado.", type: "info" })}
-                className="rounded-xl border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]"
+                className="rounded-lg border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]"
               >
                 Ver historial
               </button>
@@ -271,7 +273,7 @@ function StudentView({ setActiveView, setModal, setSelectedCourse }) {
         </Panel>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-4 lg:col-span-2 xl:col-span-1 xl:space-y-5">
         <Panel>
           <h3 className="mb-3 font-black text-[#1c5c3f]">Proxima clase</h3>
           <div className="rounded-2xl bg-[#f4f8f3] p-4">
@@ -295,10 +297,10 @@ function StudentView({ setActiveView, setModal, setSelectedCourse }) {
 
 function AdminView({ setModal }) {
   return (
-    <div className="grid gap-5 xl:grid-cols-[220px_1fr_280px]">
+    <div className="grid gap-4 lg:grid-cols-[200px_1fr] xl:grid-cols-[220px_1fr_280px] xl:gap-5">
       <Sidebar title="Admin" items={adminMenu} setModal={setModal} />
 
-      <div className="space-y-5">
+      <div className="min-w-0 space-y-4 xl:space-y-5">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {adminStats.map(([label, value]) => (
             <Panel key={label} className="p-4">
@@ -358,7 +360,7 @@ function AdminView({ setModal }) {
         </Panel>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-4 lg:col-span-2 xl:col-span-1 xl:space-y-5">
         <Panel>
           <h3 className="mb-4 font-black text-[#1c5c3f]">Acciones rapidas</h3>
           <div className="grid gap-2">
@@ -472,16 +474,16 @@ function OnlineView({ selectedCourse, setSelectedCourse, setModal }) {
   const [name, mode, progress, teacher, nextSession] = selected;
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[260px_1fr_300px]">
+    <div className="grid gap-4 lg:grid-cols-[240px_1fr] xl:grid-cols-[260px_1fr_300px] xl:gap-5">
       <Panel className="p-3">
         <div className="px-3 py-2 text-xs font-black uppercase tracking-wide text-[#6b7f2b]">Catalogo online</div>
-        <div className="space-y-2">
+        <div className="flex gap-2 overflow-x-auto lg:block lg:space-y-2">
           {onlineCourses.map(([courseName, courseMode, courseProgress]) => (
             <button
               key={courseName}
               type="button"
               onClick={() => setSelectedCourse(courseName)}
-              className={cls("w-full rounded-xl p-3 text-left", selectedCourse === courseName ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f] hover:bg-[#e4f1dc]")}
+              className={cls("w-52 shrink-0 rounded-lg p-3 text-left lg:w-full", selectedCourse === courseName ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f] hover:bg-[#e4f1dc]")}
             >
               <div className="font-black">{courseName}</div>
               <div className={cls("text-xs font-bold", selectedCourse === courseName ? "text-[#d7eaa0]" : "text-[#60746a]")}>{courseMode} · {courseProgress}%</div>
@@ -490,7 +492,7 @@ function OnlineView({ selectedCourse, setSelectedCourse, setModal }) {
         </div>
       </Panel>
 
-      <Panel>
+      <Panel className="min-w-0">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-2xl font-black text-[#1c5c3f]">{name}</h2>
@@ -498,7 +500,7 @@ function OnlineView({ selectedCourse, setSelectedCourse, setModal }) {
           </div>
           <span className="rounded-full bg-[#e4f1dc] px-3 py-1 text-sm font-black text-[#1c5c3f]">Avance {progress}%</span>
         </div>
-        <div className="flex h-72 items-center justify-center rounded-2xl bg-[#1c5c3f] text-white">
+        <div className="flex min-h-56 items-center justify-center rounded-lg bg-[#1c5c3f] p-4 text-white sm:h-72">
           <div className="text-center">
             <PlayCircle className="mx-auto mb-3 h-14 w-14 text-[#d7eaa0]" />
             <div className="text-xl font-black">Video principal / clase online</div>
@@ -538,7 +540,7 @@ function OnlineView({ selectedCourse, setSelectedCourse, setModal }) {
         </div>
       </Panel>
 
-      <div className="space-y-5">
+      <div className="space-y-4 lg:col-span-2 xl:col-span-1 xl:space-y-5">
         <Panel>
           <h3 className="mb-4 font-black text-[#1c5c3f]">Materiales descargables</h3>
           <div className="space-y-2">
@@ -595,15 +597,15 @@ function MobileAppView({ mobileScreen, setMobileScreen }) {
   const screens = ["Login UVB Online", "Mi cuenta", "Estado de cuenta", "Mis cursos", "Calendario / Salon virtual"];
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[220px_1fr_1fr_320px]">
+    <div className="grid gap-4 lg:grid-cols-[220px_1fr_1fr] xl:grid-cols-[220px_1fr_1fr_320px] xl:gap-5">
       <Panel className="p-3">
         <div className="px-3 py-2 text-xs font-black uppercase tracking-wide text-[#6b7f2b]">Pantallas</div>
-        <div className="space-y-2">
+        <div className="flex gap-2 overflow-x-auto lg:block lg:space-y-2">
           {screens.map((item) => (
             <button
               key={item}
               onClick={() => setMobileScreen(item)}
-              className={cls("w-full rounded-xl px-3 py-3 text-left text-sm font-bold", mobileScreen === item ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f]")}
+              className={cls("w-44 shrink-0 rounded-lg px-3 py-3 text-left text-sm font-bold lg:w-full", mobileScreen === item ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f]")}
             >
               {item}
             </button>
@@ -612,7 +614,7 @@ function MobileAppView({ mobileScreen, setMobileScreen }) {
       </Panel>
       <PhoneScreen platform="iOS" screen={mobileScreen} />
       <PhoneScreen platform="Android" screen={mobileScreen} />
-      <Panel>
+      <Panel className="lg:col-span-3 xl:col-span-1">
         <Smartphone className="mb-4 h-8 w-8 text-[#8ba63f]" />
         <h2 className="text-2xl font-black text-[#1c5c3f]">App movil iOS / Android</h2>
         <p className="mt-3 text-sm leading-relaxed text-[#3c594a]">
@@ -656,17 +658,22 @@ function Modal({ modal, setModal }) {
 
 export default function UVBOnlineAppDemo() {
   const [activeView, setActiveView] = useState("alumno");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [modal, setModal] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState("Marketing Digital");
   const [chatMessages, setChatMessages] = useState(initialChatMessages);
   const [mobileScreen, setMobileScreen] = useState("Mi cuenta");
 
   const activeLabel = useMemo(() => views.find((view) => view.id === activeView)?.label ?? "Alumno", [activeView]);
+  const selectView = (id) => {
+    setActiveView(id);
+    setMobileMenuOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-[#f4f8f3] text-[#123524]">
       <header className="sticky top-0 z-40 border-b border-[#1c5c3f]/10 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 xl:flex-row xl:items-center xl:justify-between">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:py-4">
           <div className="flex min-w-0 items-center gap-3">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#1c5c3f] font-black text-white">UVB</div>
             <div className="min-w-0">
@@ -674,13 +681,22 @@ export default function UVBOnlineAppDemo() {
               <div className="font-black text-[#1c5c3f]">UVB Online · {activeLabel}</div>
             </div>
           </div>
-          <nav className="flex gap-2 overflow-x-auto pb-1 xl:pb-0">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen((open) => !open)}
+            className="rounded-lg bg-[#1c5c3f] p-3 text-white lg:hidden"
+            aria-expanded={mobileMenuOpen}
+            aria-label="Abrir menu"
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+          <nav className="hidden gap-2 lg:flex">
             {views.map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
                 type="button"
                 data-view={id}
-                onClick={() => setActiveView(id)}
+                onClick={() => selectView(id)}
                 className={cls(
                   "flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-sm font-black transition",
                   activeView === id ? "bg-[#1c5c3f] text-white shadow-lg shadow-green-950/15" : "bg-[#f4f8f3] text-[#1c5c3f] hover:bg-[#e4f1dc]",
@@ -692,9 +708,36 @@ export default function UVBOnlineAppDemo() {
             ))}
           </nav>
         </div>
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.nav
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden border-t border-[#1c5c3f]/10 bg-white px-4 pb-4 lg:hidden"
+            >
+              <div className="grid gap-2 pt-3">
+                {views.map(({ id, label, icon: Icon }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => selectView(id)}
+                    className={cls(
+                      "flex items-center gap-3 rounded-lg px-4 py-3 text-left text-sm font-black",
+                      activeView === id ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f]",
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </motion.nav>
+          )}
+        </AnimatePresence>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
+      <main className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-5">
         <AnimatePresence mode="wait">
           <motion.section key={activeView} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.22 }}>
             {activeView === "alumno" && <StudentView setActiveView={setActiveView} setModal={setModal} setSelectedCourse={setSelectedCourse} />}
