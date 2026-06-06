@@ -126,14 +126,14 @@ function Sidebar({ title, items, activeItem, onSelect }) {
   return (
     <Panel className="p-3">
       <div className="px-3 py-2 text-xs font-black uppercase tracking-wide text-[#6b7f2b]">{title}</div>
-      <div className="flex min-w-0 gap-2 overflow-x-auto lg:block lg:space-y-1">
+      <div className="grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-3 lg:block lg:space-y-1">
         {items.map((item) => (
           <button
             key={item}
             type="button"
             onClick={() => onSelect(item)}
             className={cls(
-              "flex shrink-0 items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-bold xl:w-full",
+              "flex min-h-11 items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-bold xl:w-full",
               "lg:w-full",
               activeItem === item ? "bg-[#1c5c3f] text-white" : "text-[#1c5c3f] hover:bg-[#f4f8f3]",
             )}
@@ -532,13 +532,13 @@ function OnlineView({ selectedCourse, setSelectedCourse, setModal }) {
     <div className="grid gap-4 lg:grid-cols-[240px_1fr] xl:grid-cols-[260px_1fr_300px] xl:gap-5">
       <Panel className="p-3">
         <div className="px-3 py-2 text-xs font-black uppercase tracking-wide text-[#6b7f2b]">Catalogo online</div>
-        <div className="flex gap-2 overflow-x-auto lg:block lg:space-y-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:block lg:space-y-2">
           {onlineCourses.map(([courseName, courseMode, courseProgress]) => (
             <button
               key={courseName}
               type="button"
               onClick={() => setSelectedCourse(courseName)}
-              className={cls("w-52 shrink-0 rounded-lg p-3 text-left lg:w-full", selectedCourse === courseName ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f] hover:bg-[#e4f1dc]")}
+              className={cls("w-full rounded-lg p-3 text-left", selectedCourse === courseName ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f] hover:bg-[#e4f1dc]")}
             >
               <div className="font-black">{courseName}</div>
               <div className={cls("text-xs font-bold", selectedCourse === courseName ? "text-[#d7eaa0]" : "text-[#60746a]")}>{courseMode} · {courseProgress}%</div>
@@ -655,12 +655,12 @@ function MobileAppView({ mobileScreen, setMobileScreen }) {
     <div className="grid gap-4 lg:grid-cols-[220px_1fr_1fr] xl:grid-cols-[220px_1fr_1fr_320px] xl:gap-5">
       <Panel className="p-3">
         <div className="px-3 py-2 text-xs font-black uppercase tracking-wide text-[#6b7f2b]">Pantallas</div>
-        <div className="flex gap-2 overflow-x-auto lg:block lg:space-y-2">
+        <div className="grid grid-cols-2 gap-2 lg:block lg:space-y-2">
           {screens.map((item) => (
             <button
               key={item}
               onClick={() => setMobileScreen(item)}
-              className={cls("w-44 shrink-0 rounded-lg px-3 py-3 text-left text-sm font-bold lg:w-full", mobileScreen === item ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f]")}
+              className={cls("min-h-11 w-full rounded-lg px-3 py-3 text-left text-sm font-bold lg:w-full", mobileScreen === item ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f]")}
             >
               {item}
             </button>
