@@ -122,28 +122,42 @@ function StatusBadge({ status }) {
   );
 }
 
-function Sidebar({ title, items, setModal }) {
+function Sidebar({ title, items, activeItem, onSelect }) {
   return (
     <Panel className="p-3">
       <div className="px-3 py-2 text-xs font-black uppercase tracking-wide text-[#6b7f2b]">{title}</div>
       <div className="flex min-w-0 gap-2 overflow-x-auto lg:block lg:space-y-1">
-        {items.map((item, index) => (
+        {items.map((item) => (
           <button
             key={item}
             type="button"
-            onClick={() => setModal?.({ title: item, text: `Modulo ${item} seleccionado dentro de ${title}.`, type: "info" })}
+            onClick={() => onSelect(item)}
             className={cls(
               "flex shrink-0 items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-bold xl:w-full",
               "lg:w-full",
-              index === 0 ? "bg-[#1c5c3f] text-white" : "text-[#1c5c3f] hover:bg-[#f4f8f3]",
+              activeItem === item ? "bg-[#1c5c3f] text-white" : "text-[#1c5c3f] hover:bg-[#f4f8f3]",
             )}
           >
             {item}
-            {index === 0 && <CheckCircle2 className="h-4 w-4 text-[#d7eaa0]" />}
+            {activeItem === item && <CheckCircle2 className="h-4 w-4 text-[#d7eaa0]" />}
           </button>
         ))}
       </div>
     </Panel>
+  );
+}
+
+function InfoGrid({ items }) {
+  return (
+    <div className="grid gap-3 md:grid-cols-3">
+      {items.map(([title, detail, status]) => (
+        <div key={title} className="rounded-lg border border-[#1c5c3f]/10 bg-[#f8fbf5] p-4">
+          <div className="font-black text-[#1c5c3f]">{title}</div>
+          <div className="mt-1 text-sm text-[#3c594a]">{detail}</div>
+          {status && <div className="mt-3"><StatusBadge status={status} /></div>}
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -179,9 +193,10 @@ function AiAssistant({ compact = false }) {
 }
 
 function StudentView({ setActiveView, setModal, setSelectedCourse }) {
+  const [studentSection, setStudentSection] = useState("Mi cuenta");
   return (
     <div className="grid gap-4 lg:grid-cols-[200px_1fr] xl:grid-cols-[220px_1fr_300px] xl:gap-5">
-      <Sidebar title="Alumno" items={studentMenu} setModal={setModal} />
+      <Sidebar title="Alumno" items={studentMenu} activeItem={studentSection} onSelect={setStudentSection} />
 
       <div className="min-w-0 space-y-4 xl:space-y-5">
         <Panel>
@@ -206,46 +221,43 @@ function StudentView({ setActiveView, setModal, setSelectedCourse }) {
           ))}
         </div>
 
-        <Panel>
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <h3 className="text-xl font-black text-[#1c5c3f]">Estado de cuenta</h3>
-            <div className="grid w-full gap-2 sm:w-auto sm:grid-flow-col">
-              <button
-                onClick={() => setModal({ title: "Solicitud CFDI enviada", text: "Solicitud CFDI enviada a administracion.", type: "success" })}
-                className="rounded-lg bg-[#1c5c3f] px-4 py-2 text-sm font-bold text-white"
-              >
-                Solicitar CFDI
-              </button>
-              <button
-                onClick={() => setModal({ title: "Recibo generado", text: "Recibo generado para descarga.", type: "info" })}
-                className="rounded-lg border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]"
-              >
-                Descargar recibo
-              </button>
-              <button
-                onClick={() => setModal({ title: "Historial de pagos", text: "Mayo: pendiente. Inscripcion: pagado. Curso online: pagado.", type: "info" })}
-                className="rounded-lg border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]"
-              >
-                Ver historial
-              </button>
-            </div>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[560px] text-left text-sm">
-              <tbody className="divide-y divide-[#1c5c3f]/10">
-                {accountRows.map(([concept, amount, status]) => (
-                  <tr key={concept}>
-                    <td className="py-3 font-bold">{concept}</td>
-                    <td className="py-3 font-black text-[#1c5c3f]">{amount}</td>
-                    <td className="py-3"><StatusBadge status={status} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Panel>
+        {studentSection === "Mi cuenta" && (
+          <Panel>
+            <h3 className="mb-4 text-xl font-black text-[#1c5c3f]">Mi cuenta</h3>
+            <InfoGrid items={[
+              ["Datos personales", "Maria Fernanda Lopez · UVB-2026-0184", "Activa"],
+              ["Campus", "Reynosa · Marketing Digital", "Pagado"],
+              ["Contacto", "maria.lopez@uvb.mx · +52 899 123 4567", "Aprobado"],
+            ]} />
+          </Panel>
+        )}
 
-        <Panel>
+        {studentSection === "Estado de cuenta" && (
+          <Panel>
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <h3 className="text-xl font-black text-[#1c5c3f]">Estado de cuenta</h3>
+              <div className="grid w-full gap-2 sm:w-auto sm:grid-flow-col">
+                <button onClick={() => setModal({ title: "Solicitud CFDI enviada", text: "Solicitud CFDI enviada a administracion.", type: "success" })} className="rounded-lg bg-[#1c5c3f] px-4 py-2 text-sm font-bold text-white">Solicitar CFDI</button>
+                <button onClick={() => setModal({ title: "Recibo generado", text: "Recibo generado para descarga.", type: "info" })} className="rounded-lg border border-[#1c5c3f]/15 px-4 py-2 text-sm font-bold text-[#1c5c3f]">Descargar recibo</button>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[560px] text-left text-sm">
+                <tbody className="divide-y divide-[#1c5c3f]/10">
+                  {accountRows.map(([concept, amount, status]) => (
+                    <tr key={concept}>
+                      <td className="py-3 font-bold">{concept}</td>
+                      <td className="py-3 font-black text-[#1c5c3f]">{amount}</td>
+                      <td className="py-3"><StatusBadge status={status} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Panel>
+        )}
+
+        {(studentSection === "Mi cuenta" || studentSection === "Mis cursos") && <Panel>
           <h3 className="mb-4 text-xl font-black text-[#1c5c3f]">Mis cursos</h3>
           <div className="grid gap-3 lg:grid-cols-3">
             {studentCourses.map(([name, mode, progress, teacher]) => (
@@ -270,7 +282,11 @@ function StudentView({ setActiveView, setModal, setSelectedCourse }) {
               </div>
             ))}
           </div>
-        </Panel>
+        </Panel>}
+
+        {studentSection === "Calendario" && <Panel><h3 className="mb-4 text-xl font-black text-[#1c5c3f]">Calendario</h3><InfoGrid items={[["Hoy 18:00", "Marketing Digital · Salon virtual", "Activo"], ["Viernes 12:00", "Contabilidad Basica · Aula B", "Aprobado"], ["Lunes 10:00", "Administracion de Empresas · Campus Reynosa", "Aprobado"]]} /></Panel>}
+        {studentSection === "Documentos" && <Panel><h3 className="mb-4 text-xl font-black text-[#1c5c3f]">Documentos</h3><InfoGrid items={[["Contrato academico", "Firmado y archivado", "Aprobado"], ["Identificacion", "Documento validado", "Aprobado"], ["Comprobante domicilio", "En revision por administracion", "Revision"]]} /></Panel>}
+        {studentSection === "Mensajes" && <Panel><h3 className="mb-4 text-xl font-black text-[#1c5c3f]">Mensajes</h3><InfoGrid items={[["Nuevo material disponible", "Marketing Digital · Modulo 2", "Aprobado"], ["Pago pendiente", "Colegiatura mayo requiere seguimiento", "Pendiente"], ["Documento en revision", "Comprobante domicilio", "Revision"]]} /></Panel>}
       </div>
 
       <div className="space-y-4 lg:col-span-2 xl:col-span-1 xl:space-y-5">
@@ -295,10 +311,24 @@ function StudentView({ setActiveView, setModal, setSelectedCourse }) {
   );
 }
 
-function AdminView({ setModal }) {
+function AdminView() {
+  const [adminSection, setAdminSection] = useState("Dashboard");
+  const [adminAction, setAdminAction] = useState("Alta alumno");
+  const adminCatalog = {
+    Alumnos: [["Maria Fernanda", "Marketing Digital · Reynosa", "Activa"], ["Carlos Rivera", "Administracion · Tampico", "Activo"], ["Ana Torres", "Contabilidad · Reynosa", "Revision"]],
+    Profesores: [["Mtra. Daniela Ramos", "Marketing Digital · 28 alumnos", "Activo"], ["Dr. Carlos Medina", "Administracion · 21 alumnos", "Activo"], ["Mtro. Luis Aguilar", "Contabilidad · 18 alumnos", "Activo"]],
+    Prospectos: [["Laura Garcia", "Interes: Marketing Digital", "Pendiente"], ["Jorge Salinas", "Interes: Empresas", "Revision"], ["Paola Ruiz", "Interes: Finanzas", "Pendiente"]],
+    Cursos: [["Marketing Digital", "Online · Mtra. Daniela Ramos", "Activo"], ["Administracion", "Presencial · Dr. Carlos Medina", "Activo"], ["Contabilidad Basica", "Hibrido · Mtro. Luis Aguilar", "Activo"]],
+    Pagos: [["Colegiatura mayo", "$2,850 · Maria Fernanda", "Pendiente"], ["Inscripcion", "$1,200 · Carlos Rivera", "Pagado"], ["Curso online", "$950 · Ana Torres", "Pagado"]],
+    CFDI: [["Maria Fernanda", "Solicitud de factura · mayo", "Pendiente"], ["Carlos Rivera", "CFDI emitido", "Aprobado"], ["Ana Torres", "Datos fiscales en revision", "Revision"]],
+    Documentos: [["Identificaciones", "214 archivos validados", "Aprobado"], ["Comprobantes", "32 en revision", "Revision"], ["Expedientes", "96 completos", "Aprobado"]],
+    Contratos: [["Contrato Maria Fernanda", "Firmado digitalmente", "Aprobado"], ["Contrato Carlos Rivera", "Pendiente de firma", "Pendiente"], ["Contrato Ana Torres", "Revision legal", "Revision"]],
+    Backups: [["Respaldo diario", "Base academica y documentos", "Aprobado"], ["Ultimo backup", "Hoy 02:00", "Aprobado"], ["Retencion", "30 dias", "Activo"]],
+  };
+
   return (
     <div className="grid gap-4 lg:grid-cols-[200px_1fr] xl:grid-cols-[220px_1fr_280px] xl:gap-5">
-      <Sidebar title="Admin" items={adminMenu} setModal={setModal} />
+      <Sidebar title="Admin" items={adminMenu} activeItem={adminSection} onSelect={setAdminSection} />
 
       <div className="min-w-0 space-y-4 xl:space-y-5">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -310,7 +340,7 @@ function AdminView({ setModal }) {
           ))}
         </div>
 
-        <Panel>
+        {adminSection === "Dashboard" ? <Panel>
           <div className="mb-4 flex items-center justify-between gap-3">
             <div>
               <h2 className="text-2xl font-black text-[#1c5c3f]">Dashboard administrativo</h2>
@@ -340,7 +370,10 @@ function AdminView({ setModal }) {
               </tbody>
             </table>
           </div>
-        </Panel>
+        </Panel> : <Panel>
+          <h2 className="mb-4 text-2xl font-black text-[#1c5c3f]">{adminSection}</h2>
+          <InfoGrid items={adminCatalog[adminSection] ?? []} />
+        </Panel>}
 
         <Panel>
           <h3 className="mb-4 text-xl font-black text-[#1c5c3f]">Documentos, contratos y respaldos</h3>
@@ -367,12 +400,20 @@ function AdminView({ setModal }) {
             {adminActions.map((action) => (
               <button
                 key={action}
-                onClick={() => setModal({ title: action, text: adminActionCopy[action], type: "info" })}
-                className="rounded-xl bg-[#f4f8f3] px-3 py-3 text-left text-sm font-bold text-[#1c5c3f] hover:bg-[#e4f1dc]"
+                onClick={() => setAdminAction(action)}
+                className={cls("rounded-xl px-3 py-3 text-left text-sm font-bold", adminAction === action ? "bg-[#1c5c3f] text-white" : "bg-[#f4f8f3] text-[#1c5c3f] hover:bg-[#e4f1dc]")}
               >
                 {action}
               </button>
             ))}
+          </div>
+        </Panel>
+        <Panel>
+          <h3 className="mb-2 font-black text-[#1c5c3f]">{adminAction}</h3>
+          <p className="text-sm leading-relaxed text-[#3c594a]">{adminActionCopy[adminAction]}</p>
+          <div className="mt-4 grid gap-2">
+            {adminAction === "Alta alumno" && ["Nombre completo", "Campus", "Carrera", "Documentos"].map((item) => <div key={item} className="rounded-lg bg-[#f4f8f3] px-3 py-2 text-sm font-bold text-[#1c5c3f]">{item}</div>)}
+            {adminAction !== "Alta alumno" && ["Configuracion", "Responsable", "Fecha limite"].map((item) => <div key={item} className="rounded-lg bg-[#f4f8f3] px-3 py-2 text-sm font-bold text-[#1c5c3f]">{item}</div>)}
           </div>
         </Panel>
         <AiAssistant compact />
@@ -383,6 +424,15 @@ function AdminView({ setModal }) {
 
 function TeacherView({ setModal, chatMessages, setChatMessages }) {
   const pendingMessages = Math.max(0, 6 - chatMessages.length);
+  const [teacherModule, setTeacherModule] = useState("Mis grupos");
+  const teacherContent = {
+    "Mis grupos": [["Marketing Digital A", "28 alumnos · Reynosa", "Activo"], ["Marketing Digital B", "19 alumnos · Online", "Activo"], ["Emprendedores", "14 alumnos · Online", "Revision"]],
+    "Calendario de clases": [["Hoy 18:00", "Marketing Digital A · Salon virtual", "Activo"], ["Jueves 17:00", "Finanzas · Online", "Aprobado"], ["Viernes 12:00", "Revision de actividad", "Aprobado"]],
+    Materiales: [["Video modulo 2", "Publicado para alumnos", "Aprobado"], ["Rubrica actividad", "PDF disponible", "Aprobado"], ["Plantilla campana", "Archivo editable", "Aprobado"]],
+    "Chat con alumnos": [["Maria Fernanda", "Pregunta sobre actividad", "Pendiente"], ["Carlos Rivera", "Confirmacion de entrega", "Aprobado"], ["Grupo A", "Aviso enviado", "Activo"]],
+    "Salon virtual": [["Marketing Digital", "Sala abierta hoy 18:00", "Activo"], ["Grabacion clase 1", "Disponible", "Aprobado"], ["Asistencia", "24 de 28 confirmados", "Revision"]],
+  };
+
   return (
     <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
       <div className="space-y-5">
@@ -436,13 +486,18 @@ function TeacherView({ setModal, chatMessages, setChatMessages }) {
               <button
                 key={item}
                 type="button"
-                onClick={() => setModal({ title: item, text: `Modulo de profesor abierto: ${item}.`, type: "info" })}
-                className="rounded-2xl border border-[#1c5c3f]/10 bg-[#f8fbf5] p-4 text-left font-bold text-[#1c5c3f] hover:bg-[#e4f1dc]"
+                onClick={() => setTeacherModule(item)}
+                className={cls("rounded-2xl border border-[#1c5c3f]/10 p-4 text-left font-bold", teacherModule === item ? "bg-[#1c5c3f] text-white" : "bg-[#f8fbf5] text-[#1c5c3f] hover:bg-[#e4f1dc]")}
               >
                 {item}
               </button>
             ))}
           </div>
+        </Panel>
+
+        <Panel>
+          <h3 className="mb-4 text-xl font-black text-[#1c5c3f]">{teacherModule}</h3>
+          <InfoGrid items={teacherContent[teacherModule]} />
         </Panel>
       </div>
 
